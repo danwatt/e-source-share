@@ -11,3 +11,8 @@ common enterprise architecture there is - Java.
 Joking about "enterprise" and "enterprisey" aside, this application is designed to provide a quick place
 for developers inside an organization that cares about security to copy and paste code. More importantly,
 the author is developing this as a simple example of how to build a Spring 3.2 application.
+
+## Goals
+* Persist via Hibernate
+* POST / GET via AJAX + JSON
+* Simple UI, focus more on the Spring based backend
