@@ -10,6 +10,7 @@ import static org.hibernate.cfg.Environment.USE_SQL_COMMENTS;
 import static org.hibernate.ejb.AvailableSettings.NAMING_STRATEGY;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.hibernate3.AbstractSessionFactoryBean;
 import org.springframework.orm.hibernate3.HibernateTransactionManager;
@@ -33,11 +37,46 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = SpringConfig.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class SpringConfig extends WebMvcConfigurerAdapter {
+	
+	@Bean
+	public ObjectMapper objectMapper() {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+		mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		mapper.setDateFormat(new ISO8601DateFormat());
+		mapper.registerModule(new JodaModule());
+		return mapper;
+	}
+	@Bean
+	@Autowired
+	public HttpMessageConverter<Object> jsonConverter(ObjectMapper objectMapper) {
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setObjectMapper(objectMapper);
+		return converter;
+	}
+	
+	@Autowired
+	HttpMessageConverter<Object> jsonConverter;
+	
+	@Override
+	@DependsOn("jsonConverter")
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		converters.add(jsonConverter);
+		super.configureMessageConverters(converters);
+	}
+
+
 	@Bean
 	public ViewResolver viewResolver() {
 		InternalResourceViewResolver vr = new InternalResourceViewResolver();
@@ -60,7 +99,7 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
 	public DataSource dataSource() {
 		return new SimpleDriverDataSource(new org.h2.Driver(), "jdbc:h2:mem:processdb;DB_CLOSE_DELAY=-1");
 	}
-	
+
 	@Bean
 	@Autowired
 	public AnnotationSessionFactoryBean sessionFactory(String hibernateDialect, boolean hibernateShowSql, DataSource dataSource) {
@@ -78,9 +117,9 @@ public class SpringConfig extends WebMvcConfigurerAdapter {
 	private Properties jpaProperties(String hibernateDialect) {
 		Properties properties = new Properties();
 		properties.setProperty(DIALECT, hibernateDialect);
-		properties.setProperty(HBM2DDL_AUTO,"create");
-		properties.setProperty("hibernate.generateDdl",TRUE.toString());
-		properties.setProperty("hbm2ddl.auto",TRUE.toString());
+		properties.setProperty(HBM2DDL_AUTO, "create");
+		properties.setProperty("hibernate.generateDdl", TRUE.toString());
+		properties.setProperty("hbm2ddl.auto", TRUE.toString());
 		properties.setProperty(GENERATE_STATISTICS, TRUE.toString());
 		properties.setProperty(SHOW_SQL, TRUE.toString());
 		properties.setProperty(FORMAT_SQL, TRUE.toString());
