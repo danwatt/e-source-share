@@ -1,12 +1,12 @@
 package org.danwatt.esourceshare.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.ServletContext;
 
 import org.danwatt.esourceshare.model.Source;
-import org.danwatt.esourceshare.repository.SourceRespository;
 import org.danwatt.esourceshare.service.SourceService;
 import org.junit.Before;
 import org.junit.Test;
