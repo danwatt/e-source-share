@@ -3,6 +3,7 @@ package org.danwatt.esourceshare.service;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.repository.SourceRespository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class SourceService {
 		boolean saved = false;
 		String key = null;
 		source.setRevision(source.getRevision() + 1);
+		source.setHash(DigestUtils.sha1Hex(source.getSource()));
 		while (!saved) {
 			key = Integer.toString(random.nextInt(MAX_KEY), 36);
 			saved = sourceRepository.save(key, source);

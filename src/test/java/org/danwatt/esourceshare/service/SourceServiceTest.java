@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Random;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.repository.SourceRespository;
 import org.junit.Before;
@@ -33,6 +34,7 @@ public class SourceServiceTest {
 	@Before
 	public void setup() {
 		source = new Source();
+		source.setSource("code");
 		when(random.nextInt(SourceService.MAX_KEY)).thenReturn(1, 2, 3);
 	}
 
@@ -43,6 +45,7 @@ public class SourceServiceTest {
 		verify(repository).save(Integer.toString(1, 36), source);
 		assertEquals("1", source.getKey());
 		assertEquals(1, source.getRevision());
+		assertEquals(DigestUtils.sha1Hex(source.getSource()),source.getHash());
 	}
 
 	@Test
