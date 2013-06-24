@@ -7,17 +7,19 @@ import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.repository.SourceRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SourceService {
 
-	public static final int MAX_KEY = 36 * 36 * 36 * 36 * 36 * 36;
+	public static final int MAX_KEY = 60466176;
 
 	Random random = new SecureRandom();
 
 	@Autowired
 	SourceRespository sourceRepository;
 
+	@Transactional(readOnly=false)
 	public Source save(Source source) {
 		boolean saved = false;
 		String key = null;
@@ -30,6 +32,7 @@ public class SourceService {
 		return source;
 	}
 
+	@Transactional(readOnly=true)
 	public Source get(String key, Integer revision) {
 		if (null == revision) {
 			return sourceRepository.getLatestFor(key);

@@ -3,9 +3,12 @@ package org.danwatt.esourceshare.controller;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
+import javax.servlet.ServletContext;
+
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.repository.SourceRespository;
 import org.danwatt.esourceshare.service.SourceService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -17,9 +20,16 @@ import org.springframework.http.HttpEntity;
 public class SourceControllerTest {
 	@Mock
 	SourceService sourceService;
+	@Mock
+	ServletContext servletContext;
 
 	@InjectMocks
 	SourceController controller;
+	
+	@Before
+	public void setup() {
+		when(servletContext.getContextPath()).thenReturn("/source");
+	}
 
 	@Test
 	public void index() {
