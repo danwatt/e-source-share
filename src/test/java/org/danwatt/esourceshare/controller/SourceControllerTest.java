@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import javax.servlet.ServletContext;
 
+import org.danwatt.esourceshare.exception.ResourceNotFoundException;
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.service.SourceService;
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class SourceControllerTest {
 
 	@InjectMocks
 	SourceController controller;
-	
+
 	@Before
 	public void setup() {
 		when(servletContext.getContextPath()).thenReturn("/source");
@@ -45,17 +46,30 @@ public class SourceControllerTest {
 		HttpEntity<Void> response = controller.post(source);
 		assertEquals("/source/KEY/123", response.getHeaders().getFirst("Location"));
 	}
-	
+
 	@Test
 	public void getNoRevision() {
 		Source source = new Source();
 		when(sourceService.get("KEY", null)).thenReturn(source);
-		assertSame(source,controller.get("KEY"));
+		assertSame(source, controller.get("KEY"));
 	}
+
 	@Test
 	public void getRevision() {
 		Source source = new Source();
 		when(sourceService.get("KEY", Integer.valueOf(1))).thenReturn(source);
-		assertSame(source,controller.get("KEY",1));
+		assertSame(source, controller.get("KEY", 1));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void getSpecificVersionNotFound() {
+		when(sourceService.get("KEY", Integer.valueOf(1))).thenReturn(null);
+		controller.get("KEY", 1);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void getWithoutVersionNotFound() {
+		when(sourceService.get("KEY", null)).thenReturn(null);
+		controller.get("KEY");
 	}
 }

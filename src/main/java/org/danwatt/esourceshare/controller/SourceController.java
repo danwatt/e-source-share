@@ -2,6 +2,7 @@ package org.danwatt.esourceshare.controller;
 
 import javax.servlet.ServletContext;
 
+import org.danwatt.esourceshare.exception.ResourceNotFoundException;
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.service.SourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +45,21 @@ public class SourceController {
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Source get(@PathVariable String key) {
-		return sourceService.get(key, null);
+		Source s = sourceService.get(key, null);
+		if (s == null ){
+			throw new ResourceNotFoundException();
+		}
+		return s;
 	}
 
 	@RequestMapping(value = { "/{key}/{revision}" }, method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Source get(@PathVariable String key, @PathVariable int revision) {
-		return sourceService.get(key, revision);
+		Source s = sourceService.get(key, revision);
+		if (s == null ){
+			throw new ResourceNotFoundException();
+		}
+		return s;
 	}
 }

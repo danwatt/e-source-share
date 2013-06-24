@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class MvcIntegrationTest extends SpringTest{
+public class MvcIntegrationTest extends SpringTest {
 	@Autowired
 	WebApplicationContext wac;
 
@@ -33,24 +33,24 @@ public class MvcIntegrationTest extends SpringTest{
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.webAppContextSetup(wac).build();
 	}
-	
+
 	@Test
 	public void postAndGet() throws Exception {
 		Source source = new Source();
 		source.setSource("Code");
-		
-		MvcResult result = mvc.perform(
-				post("/")
-				.content(objectMapper.writeValueAsBytes(source))
-				.contentType(MediaType.APPLICATION_JSON)
-			)
-			.andExpect(status().isCreated())
-			.andReturn();
+
+		MvcResult result = mvc.perform(post("/").content(objectMapper.writeValueAsBytes(source)).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andReturn();
 		String createdLocation = result.getResponse().getHeader("Location");
 		assertTrue(createdLocation.matches("\\/[A-Za-z0-9]{1,6}\\/1"));
 		MvcResult getResponse = mvc.perform(get(createdLocation).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
-		
+
 		Source retrieved = objectMapper.readValue(getResponse.getResponse().getContentAsByteArray(), Source.class);
-		assertEquals(source.getSource(),retrieved.getSource());
+		assertEquals(source.getSource(), retrieved.getSource());
+	}
+
+	@Test
+	public void getNotFound() throws Exception {
+		mvc.perform(get("/nofind/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
 	}
 }
