@@ -1,0 +1,17 @@
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<logger name="org.apache.http" level="WARN" />
+	<logger name="org.hibernate" level="WARN" />
+	<logger name="org.springframework" level="${root-logging-level:-WARN}" />
+	<logger name="org.springframework.web.servlet.PageNotFound"
+		level="ERROR" />
+
+	<root level="${root-logging-level:-DEBUG}">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>
