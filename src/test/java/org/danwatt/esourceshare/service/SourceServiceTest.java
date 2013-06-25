@@ -1,5 +1,6 @@
 package org.danwatt.esourceshare.service;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
@@ -46,6 +47,7 @@ public class SourceServiceTest {
 		assertEquals("1", source.getKey());
 		assertEquals(1, source.getRevision());
 		assertEquals(DigestUtils.sha1Hex(source.getSource()),source.getHash());
+		assertNotNull(source.getCreatedAt());
 	}
 
 	@Test

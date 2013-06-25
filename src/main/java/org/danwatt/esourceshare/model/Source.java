@@ -28,25 +28,27 @@ public class Source {
 
 	@Column(name = "external_key", insertable = true, updatable = false, length = 6)
 	private String key;
+	@Column(name = "title", insertable = true, updatable = true, length = 256)
+	private String title;
 
 	@Column(name = "revision", insertable = true, updatable = false)
 	private int revision;
-	
+
 	@Column(name = "hash", length = 40)
 	private String hash;
-	
+
 	@Column(name = "source", length = Integer.MAX_VALUE)
 	private String source;
-	
+
 	@Column(name = "langauge", length = 64)
 	private String language;
-	
-	@ElementCollection(fetch=FetchType.EAGER)
+
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> tags = new TreeSet<String>();
-	
+
 	@Column(name = "created_at", nullable = false)
 	@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
-	private DateTime createdAt = new DateTime();
+	private DateTime createdAt;
 
 	public DateTime getCreatedAt() {
 		return createdAt;
@@ -110,5 +112,12 @@ public class Source {
 
 	public void setTags(Set<String> tags) {
 		this.tags = tags;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

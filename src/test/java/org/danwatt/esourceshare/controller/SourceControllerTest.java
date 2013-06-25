@@ -29,7 +29,7 @@ public class SourceControllerTest {
 
 	@Before
 	public void setup() {
-		when(servletContext.getContextPath()).thenReturn("/source");
+		when(servletContext.getContextPath()).thenReturn("");
 	}
 
 	@Test
@@ -45,6 +45,8 @@ public class SourceControllerTest {
 		when(sourceService.save(source)).thenReturn(source);
 		HttpEntity<Void> response = controller.post(source);
 		assertEquals("/source/KEY/123", response.getHeaders().getFirst("Location"));
+		assertEquals("KEY",response.getHeaders().getFirst("X-Source-Key"));
+		assertEquals("123",response.getHeaders().getFirst("X-Source-Revision"));
 	}
 
 	@Test
