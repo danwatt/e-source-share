@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.danwatt.esourceshare.model.Source;
 import org.danwatt.esourceshare.repository.SourceRespository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class SourceService {
 		String key = null;
 		source.setRevision(source.getRevision() + 1);
 		source.setHash(DigestUtils.sha1Hex(source.getSource()));
+		source.setCreatedAt(new DateTime());
 		while (!saved) {
 			key = Integer.toString(random.nextInt(MAX_KEY), 36);
 			saved = sourceRepository.save(key, source);
