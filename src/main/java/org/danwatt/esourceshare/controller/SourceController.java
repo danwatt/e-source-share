@@ -30,18 +30,20 @@ public class SourceController {
 		return "index";
 	}
 
-	@RequestMapping(value = { "", "/" }, method = RequestMethod.POST)
+	@RequestMapping(value = { "/source" }, method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
 	public HttpEntity<Void> post(@RequestBody Source source) {
 		Source saved = sourceService.save(source);
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Location", servletContext.getContextPath() +"/"+ saved.getKey() + "/" + saved.getRevision());
+		headers.add("Location", servletContext.getContextPath() +"/source/"+ saved.getKey() + "/" + saved.getRevision());
+		headers.add("X-Source-Key", saved.getKey());
+		headers.add("X-Source-Revision", Integer.toString(saved.getRevision()));
 		HttpEntity<Void> response = new HttpEntity<Void>((Void) null, headers);
 		return response;
 	}
 
-	@RequestMapping(value = { "/{key}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/source/{key}" }, method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Source get(@PathVariable String key) {
@@ -52,7 +54,7 @@ public class SourceController {
 		return s;
 	}
 
-	@RequestMapping(value = { "/{key}/{revision}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/source/{key}/{revision}" }, method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	@ResponseBody
 	public Source get(@PathVariable String key, @PathVariable int revision) {

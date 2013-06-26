@@ -9,11 +9,7 @@
 	    <!--[if lt IE 9]>
 	      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	    <![endif]-->
-	    <link href="resources/bootstrap.min.css" rel="stylesheet" />
-	    <script type="text/javascript" src="resources/jquery.min.js"></script>
-	    <script type="text/javascript" src="resources/bootsrap.min.js"></script>
-	    <script type="text/javascript" src="resources/knockout.min.js"></script>
-	    <script type="text/javascript" src="resources/source.js"></script>
+	    <link href="<%= request.getContextPath() %>/resources/bootstrap.min.css" rel="stylesheet" />
     <style>
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -33,17 +29,42 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
       </div>
     </div>
 
-    <div class="container">
-    	<input type="text" class="input-block-level" placeholder="Title" />
-		<textarea class="input-block-level" id="source" rows="10" placeholder="Source"></textarea>
-		<button class="btn btn-primary pull-right" href="#" id="save">Save</button>
+    <div class="container"  data-bind="with: activeSource">
+    	<div>
+    		<div class="row">
+    			<div class="span9">
+    				<input type="text" class="input-block-level" placeholder="Title" data-bind="value: title" />
+    			</div>
+    			<div class="span3">
+    				<input type="text" class="input-block-level" placeholder="Language" data-bind="value: language" />
+    			</div>
+    		</div>
+    		<div class="row">
+    			<div class="span12">
+					<textarea class="input-block-level" id="source" rows="10" placeholder="Source" data-bind="value: source"></textarea>
+				</div>
+			</div>
+		</div>
+		<div>
+			<div class="alert alert-info pull-left" data-bind="visible: hasLink">
+					<strong>Source:</strong> <span data-bind="text: link" ></span>
+			</div>
+			<button class="btn btn-primary pull-right" href="#" id="save" data-bind="click: save">Save</button>
+		</div>
     </div> <!-- /container -->
-</body></html>
+    	<script type="text/javascript" src="<%= request.getContextPath() %>/resources/jquery.min.js"></script>
+	    <script type="text/javascript" src="<%= request.getContextPath() %>/resources/bootstrap.min.js"></script>
+	    <script type="text/javascript" src="<%= request.getContextPath() %>/resources/knockout.min.js"></script>
+	    <script type="text/javascript" src="<%= request.getContextPath() %>/resources/sammy.js"></script>
+	    <script type="text/javascript">
+	    	var baseUrl = '<%= request.getContextPath() %>';
+	    </script>
+	    <script type="text/javascript" src="<%= request.getContextPath() %>/resources/source.js"></script>
+	</body>
+</html>

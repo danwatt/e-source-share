@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -39,10 +40,10 @@ public class MvcIntegrationTest extends SpringTest {
 		Source source = new Source();
 		source.setSource("Code");
 
-		MvcResult result = mvc.perform(post("/").content(objectMapper.writeValueAsBytes(source)).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andReturn();
+		MvcResult result = mvc.perform(post("/source").content(objectMapper.writeValueAsBytes(source)).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print()).andReturn();
 		String createdLocation = result.getResponse().getHeader("Location");
-		assertTrue(createdLocation.matches("\\/[A-Za-z0-9]{1,6}\\/1"));
+		assertTrue(createdLocation.matches("\\/source\\/[A-Za-z0-9]{1,6}\\/1"));
 		MvcResult getResponse = mvc.perform(get(createdLocation).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
 
 		Source retrieved = objectMapper.readValue(getResponse.getResponse().getContentAsByteArray(), Source.class);
@@ -51,6 +52,6 @@ public class MvcIntegrationTest extends SpringTest {
 
 	@Test
 	public void getNotFound() throws Exception {
-		mvc.perform(get("/nofind/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+		mvc.perform(get("/source/nofind/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
 	}
 }
